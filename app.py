@@ -15,7 +15,7 @@ def home():
 
         # Reading Microphone as source
         with sr.Microphone() as source:
-            r.adjust_for_ambient_noise(source, duration=0.5)
+            r.adjust_for_ambient_noise(source, duration=0.2)
             audio = r.listen(source)
             
             try:
