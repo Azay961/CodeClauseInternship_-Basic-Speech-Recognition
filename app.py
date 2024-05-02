@@ -1,17 +1,30 @@
 import speech_recognition as sr
+from flask import Flask, render_template, request
 
-# Initialize recognizer class (f
-r = sr.Recognizer()
+app = Flask(__name__)
 
-# Reading Microphone as source
-with sr.Microphone() as source:
-    print("Please talk now")
+@app.route('/')
+def index():
+    return render_template("index.html")
 
-    r.adjust_for_ambient_noise(source, duration=0.5)
-    audio = r.listen(source)
+@app.route('/record', methods=["GET", "POST"])
+def home():
+    if request.method == 'POST':  # Corrected to uppercase 'POST'
+        # Initialize recognizer class 
+        r = sr.Recognizer()
+
+        # Reading Microphone as source
+        with sr.Microphone() as source:
+            r.adjust_for_ambient_noise(source, duration=0.5)
+            audio = r.listen(source)
+            
+            try:
+                # using google speech recognition
+                output = r.recognize_google(audio)
+            except:
+                output = "Sorry, audio not recognized"
+            
+        return render_template("index.html", output=output)
     
-    try:
-        # using google speech recognition
-        print("Text: "+r.recognize_google(audio))
-    except:
-         print("Sorry, audio not recognized")
+if __name__ == "__main__":
+    app.run(debug=True)
